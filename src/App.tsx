@@ -9,7 +9,7 @@ function App() {
 
       <Footer />
     </Page>
-  );
+  )
 }
 
-export default App;
+export default App

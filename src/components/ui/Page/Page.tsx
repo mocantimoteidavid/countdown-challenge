@@ -5,6 +5,6 @@ const Page = styled.div`
     max-width: 750px;
     margin: 0 auto;
     font-size: 16px;
-`;
+`
 
-export default Page;
+export default Page

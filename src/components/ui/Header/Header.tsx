@@ -7,7 +7,7 @@ const StyledHeader = styled.header`
         font-size: 64px;
         margin: 0;
     }
-`;
+`
 
 const Header = () => (
     <StyledHeader>
@@ -16,4 +16,4 @@ const Header = () => (
 )
 
 
-export default Header;
+export default Header
