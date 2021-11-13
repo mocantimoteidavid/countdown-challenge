@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import React from "react"
 import dayjs, { UnitTypeLongPlural } from "dayjs"
 
 import Unit from "./Unit"
@@ -39,13 +39,8 @@ import UnitsWrapper from "./UnitsWrapper"
  *   -- I first thought that day.js would provide a basic solution for this, but it turns out I had to take each unit one by one in a descending order, calculate the difference for one, substract it from the endDate, calculate the next difference and continue so on.
  *   -- Otherwise for all units I was getting the difference of exactly how many days / minutes it took till the endDate. Which wasn't the desired outcome.
  * How do I optimise the JS calculations?
- *
- *
- * Use dayjs([2010, 1, 14, 15, 25, 50, 125]); to calculate endDate
- *
- * Calculate difference of months, days, hours...
- * const endDate = dayjs('2019-01-25')
- * endDate.diff(currentDate, 'month')
+ *   -- I need to use 'useCallback' for individual methods inside the functional component, otherwise we have a new interval every second generated - meaning a ton of memory leaks - meaning laptop takes off in 1 minute
+ *   -- Decided to refactor it into a class component - making it much easier to ready & understand. Too many callbacks made it difficult to read. Also the testing should be a bit more straightforward.
  *
  */
 
@@ -71,74 +66,88 @@ interface Props {
   format: PossibleUnit[]
 }
 
-const Countdown: React.FC<Props> = ({ title, endDate, format }) => {
-  const { year, month, day, hour, minute, second } = endDate
-
-  const jsEndDate = new Date(year, month - 1, day, hour, minute, second)
-  // memo this (to change only when endDate changes)
-  const parsedEndDate = dayjs(jsEndDate)
-
-  const getEndDateDifferenceByUnit = useCallback(() => {
-    const currentDate = dayjs()
-    let modifiableEndDate = dayjs(parsedEndDate)
-
-    let differencesByUnit: number[] = []
-
-    // transform to .reduce with accumulator
-    format.forEach((unit) => {
-      const unitDifference = modifiableEndDate.diff(currentDate, unit)
-      differencesByUnit.push(unitDifference)
-
-      const singularUnit = unit.slice(0, -1)
-      modifiableEndDate = modifiableEndDate.subtract(
-        unitDifference,
-        singularUnit
-      )
-    })
-
-    return differencesByUnit
-  }, [parsedEndDate, format])
-
-  const [countdownValues, setCountdownValues] = useState<number[]>(
-    getEndDateDifferenceByUnit
-  )
-
-  const refreshCountdownValues = useCallback(
-    (countdownInterval: NodeJS.Timeout) => {
-      console.log("refreshCountdownValues called")
-      if (dayjs().valueOf() >= parsedEndDate.valueOf()) {
-        clearInterval(countdownInterval)
-      } else {
-        const differences = getEndDateDifferenceByUnit()
-        setCountdownValues(differences)
-      }
-    },
-    [getEndDateDifferenceByUnit, setCountdownValues, parsedEndDate]
-  )
-
-  useEffect(() => {
-    const countdownInterval: NodeJS.Timeout = setInterval(
-      () => refreshCountdownValues(countdownInterval),
-      1000
-    )
-
-    return () => {
-      clearInterval(countdownInterval)
-    }
-  }, [refreshCountdownValues])
-
-  console.log("rendered")
-
-  return (
-    <>
-      <Title>{title}</Title>
-      <UnitsWrapper>
-        {format.map((unit, i) => {
-          return <Unit key={unit} label="" value={countdownValues[i]} />
-        })}
-      </UnitsWrapper>
-    </>
-  )
+interface State {
+  parsedEndDate: dayjs.Dayjs
+  countdownValues: number[]
 }
 
-export default Countdown
+function getEndDateDifferenceByUnit(
+  parsedEndDate: dayjs.Dayjs,
+  format: PossibleUnit[]
+): number[] {
+  const currentDate = dayjs()
+  let modifiableEndDate = dayjs(parsedEndDate)
+
+  let differencesByUnit: number[] = []
+
+  // transform to .reduce with accumulator
+  format.forEach((unit) => {
+    const unitDifference = modifiableEndDate.diff(currentDate, unit)
+    differencesByUnit.push(unitDifference)
+
+    const singularUnit = unit.slice(0, -1)
+    modifiableEndDate = modifiableEndDate.subtract(unitDifference, singularUnit)
+  })
+
+  return differencesByUnit
+}
+
+class ClassCountdown extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+    const {
+      format,
+      endDate: { year, month, day, hour, minute, second },
+    } = this.props
+
+    const parsedEndDate = dayjs(
+      new Date(year, month - 1, day, hour, minute, second)
+    )
+
+    this.state = {
+      parsedEndDate: parsedEndDate,
+      countdownValues: getEndDateDifferenceByUnit(parsedEndDate, format),
+    }
+
+    this.refreshCountdownValues = this.refreshCountdownValues.bind(this)
+  }
+
+  private countdownInterval: number | undefined
+
+  public refreshCountdownValues(countdownInterval: number) {
+    const { parsedEndDate } = this.state
+    const { format } = this.props
+    if (dayjs().valueOf() >= parsedEndDate.valueOf()) {
+      clearInterval(countdownInterval)
+    } else {
+      const differences = getEndDateDifferenceByUnit(parsedEndDate, format)
+      this.setState({ parsedEndDate, countdownValues: differences })
+    }
+  }
+
+  componentDidMount() {
+    this.countdownInterval = setInterval(this.refreshCountdownValues, 1000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.countdownInterval)
+  }
+
+  render() {
+    const { title, format } = this.props
+    const { countdownValues } = this.state
+
+    return (
+      <>
+        <Title>{title}</Title>
+        <UnitsWrapper>
+          {format.map((unit, i) => {
+            return <Unit key={unit} label={unit} value={countdownValues[i]} />
+          })}
+        </UnitsWrapper>
+      </>
+    )
+  }
+}
+
+export default ClassCountdown
