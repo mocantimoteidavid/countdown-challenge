@@ -77,15 +77,13 @@ function getEndDateDifferenceByUnit(
 ): number[] {
   const currentDate = dayjs()
   let modifiableEndDate = dayjs(parsedEndDate)
-
   let differencesByUnit: number[] = []
 
-  // transform to .reduce with accumulator
   format.forEach((unit) => {
     const unitDifference = modifiableEndDate.diff(currentDate, unit)
     differencesByUnit.push(unitDifference)
 
-    const singularUnit = unit.slice(0, -1)
+    const singularUnit: string = unit.slice(0, -1)
     modifiableEndDate = modifiableEndDate.subtract(unitDifference, singularUnit)
   })
 
