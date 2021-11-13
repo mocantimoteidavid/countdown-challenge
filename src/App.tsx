@@ -4,8 +4,7 @@ import Page from "./components/ui/Page"
 function App() {
   return (
     <Page>
-      <p>Page content goes here...</p>
-      <Countdown title="Monkey" />
+      <Countdown title="Starts in" />
     </Page>
   )
 }
