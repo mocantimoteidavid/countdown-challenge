@@ -105,7 +105,7 @@ class ClassCountdown extends React.Component<Props, State> {
     )
 
     this.state = {
-      parsedEndDate: parsedEndDate,
+      parsedEndDate,
       countdownValues: getEndDateDifferenceByUnit(parsedEndDate, format),
     }
 
@@ -114,10 +114,14 @@ class ClassCountdown extends React.Component<Props, State> {
 
   private countdownInterval: number | undefined
 
-  public refreshCountdownValues(countdownInterval: number) {
+  private refreshCountdownValues(countdownInterval: number) {
     const { parsedEndDate } = this.state
     const { format } = this.props
-    if (dayjs().valueOf() >= parsedEndDate.valueOf()) {
+
+    const currentTime = dayjs().valueOf()
+    const endTime = parsedEndDate.valueOf()
+
+    if (currentTime >= endTime) {
       clearInterval(countdownInterval)
     } else {
       const differences = getEndDateDifferenceByUnit(parsedEndDate, format)
