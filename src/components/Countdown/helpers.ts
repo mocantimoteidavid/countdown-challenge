@@ -7,7 +7,8 @@ function getEndDateDifferenceByUnit(
   format: PossibleUnit[]
 ): number[] {
   const currentDate = dayjs()
-  let modifiableEndDate = dayjs(parsedEndDate)
+  console.log(parsedEndDate)
+  let modifiableEndDate = parsedEndDate
   let differencesByUnit: number[] = []
 
   format.forEach((unit) => {
