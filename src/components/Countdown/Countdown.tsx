@@ -1,6 +1,11 @@
 import React from "react"
-import dayjs, { UnitTypeLongPlural } from "dayjs"
+import dayjs from "dayjs"
 
+import {
+  getEndDateDifferenceByUnit,
+  mapUnitToLabel,
+  PossibleUnit,
+} from "./helpers"
 import Unit from "./Unit"
 import Title from "./Title"
 import UnitsWrapper from "./UnitsWrapper"
@@ -59,8 +64,6 @@ type EndDate = {
   second: number
 }
 
-type PossibleUnit = Exclude<UnitTypeLongPlural, "dates" | "milliseconds">
-
 interface Props {
   title: string
   endDate: EndDate
@@ -77,34 +80,6 @@ interface Props {
 interface State {
   parsedEndDate: dayjs.Dayjs
   countdownValues: number[]
-}
-
-function getEndDateDifferenceByUnit(
-  parsedEndDate: dayjs.Dayjs,
-  format: PossibleUnit[]
-): number[] {
-  const currentDate = dayjs()
-  let modifiableEndDate = dayjs(parsedEndDate)
-  let differencesByUnit: number[] = []
-
-  format.forEach((unit) => {
-    const unitDifference = modifiableEndDate.diff(currentDate, unit)
-    differencesByUnit.push(unitDifference)
-
-    const singularUnit: string = unit.slice(0, -1)
-    modifiableEndDate = modifiableEndDate.subtract(unitDifference, singularUnit)
-  })
-
-  return differencesByUnit
-}
-
-const mapUnitToLabel: Record<PossibleUnit, string> = {
-  years: "Years",
-  months: "Months",
-  days: "Days",
-  hours: "Hours",
-  minutes: "Minutes",
-  seconds: "Seconds",
 }
 
 class ClassCountdown extends React.Component<Props, State> {
