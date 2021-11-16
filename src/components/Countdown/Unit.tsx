@@ -31,9 +31,12 @@ const Wrapper = styled.div`
 `
 
 const Unit: React.FC<Props> = ({ label, value, leadingZero }) => {
+  const isValueSingleDigit = value < 10 && value >= 0
+  const displayValue = isValueSingleDigit && leadingZero ? `0${value}` : value
+
   return (
     <Wrapper>
-      <Value>{value}</Value>
+      <Value>{displayValue}</Value>
       <Label>{label}</Label>
     </Wrapper>
   )

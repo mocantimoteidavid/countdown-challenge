@@ -42,6 +42,12 @@ import UnitsWrapper from "./UnitsWrapper"
  *   -- I need to use 'useCallback' for individual methods inside the functional component, otherwise we have a new interval every second generated - meaning a ton of memory leaks - meaning laptop takes off in 1 minute
  *   -- Decided to refactor it into a class component - making it much easier to ready & understand. Too many callbacks made it difficult to read. Also the testing should be a bit more straightforward.
  *
+ * How do I render the leading 0?
+ *   -- that will be rendered using a prop in the UnitBlock. Should be agnostic of anything outside.
+ *   -- the prop will be passed for components that have the "hours", "minutes" & "seconds" format
+ *
+ *
+ * Consider adding a Limitations section in the Readme with conclusions.
  */
 
 type EndDate = {
@@ -62,6 +68,8 @@ interface Props {
    * Must be ordered from biggest units to smallest.
    * Good example: ["days", "hours", "seconds"].
    * Bad example: ["days", "seconds", "hours"].
+   *
+   * TODO: Think about ordering them yourself. Order by weight.
    */
   format: PossibleUnit[]
 }
@@ -127,6 +135,10 @@ class ClassCountdown extends React.Component<Props, State> {
     }
   }
 
+  private shouldRenderLeadingZero(unit: PossibleUnit): boolean {
+    return ["hours", "minutes", "seconds"].includes(unit) ? true : false
+  }
+
   componentDidMount() {
     this.countdownInterval = setInterval(this.refreshCountdownValues, 1000)
   }
@@ -144,7 +156,14 @@ class ClassCountdown extends React.Component<Props, State> {
         <Title>{title}</Title>
         <UnitsWrapper>
           {format.map((unit, i) => {
-            return <Unit key={unit} label={unit} value={countdownValues[i]} />
+            return (
+              <Unit
+                key={unit}
+                label={unit}
+                value={countdownValues[i]}
+                leadingZero={this.shouldRenderLeadingZero(unit)}
+              />
+            )
           })}
         </UnitsWrapper>
       </>
