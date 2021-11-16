@@ -3,6 +3,7 @@ import dayjs from "dayjs"
 
 import {
   getEndDateDifferenceByUnit,
+  getSortedFormat,
   mapUnitToLabel,
   PossibleUnit,
 } from "./helpers"
@@ -68,16 +69,13 @@ interface Props {
   title: string
   endDate: EndDate
   /**
-   * Must be ordered from biggest units to smallest.
-   * Good example: ["days", "hours", "seconds"].
-   * Bad example: ["days", "seconds", "hours"].
-   *
-   * TODO: Think about ordering them yourself. Order by weight.
+   * Order of units does not matter, they're sorted from years -> seconds automatically
    */
   format: PossibleUnit[]
 }
 
 interface State {
+  format: PossibleUnit[]
   parsedEndDate: dayjs.Dayjs
   countdownValues: number[]
 }
@@ -93,10 +91,12 @@ class ClassCountdown extends React.Component<Props, State> {
     const parsedEndDate = dayjs(
       new Date(year, month - 1, day, hour, minute, second)
     )
+    const sortedFormat = getSortedFormat(format)
 
     this.state = {
+      format: sortedFormat,
       parsedEndDate,
-      countdownValues: getEndDateDifferenceByUnit(parsedEndDate, format),
+      countdownValues: getEndDateDifferenceByUnit(parsedEndDate, sortedFormat),
     }
 
     this.refreshCountdownValues = this.refreshCountdownValues.bind(this)
@@ -105,8 +105,7 @@ class ClassCountdown extends React.Component<Props, State> {
   private countdownInterval: number | undefined
 
   private refreshCountdownValues(countdownInterval: number) {
-    const { parsedEndDate } = this.state
-    const { format } = this.props
+    const { parsedEndDate, format } = this.state
 
     const currentTime = dayjs().valueOf()
     const endTime = parsedEndDate.valueOf()
@@ -132,8 +131,8 @@ class ClassCountdown extends React.Component<Props, State> {
   }
 
   render() {
-    const { title, format } = this.props
-    const { countdownValues } = this.state
+    const { title } = this.props
+    const { countdownValues, format } = this.state
 
     return (
       <>

@@ -30,4 +30,16 @@ const mapUnitToLabel: Record<PossibleUnit, string> = {
   seconds: "Seconds",
 }
 
-export { getEndDateDifferenceByUnit, mapUnitToLabel }
+const unitWeights: Record<PossibleUnit, number> = {
+  years: 1,
+  months: 2,
+  days: 3,
+  hours: 4,
+  minutes: 5,
+  seconds: 6,
+}
+
+const getSortedFormat = (format: PossibleUnit[]): PossibleUnit[] =>
+  format.sort((a, b) => unitWeights[a] - unitWeights[b])
+
+export { getEndDateDifferenceByUnit, getSortedFormat, mapUnitToLabel }

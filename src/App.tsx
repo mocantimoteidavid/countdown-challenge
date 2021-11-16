@@ -15,7 +15,7 @@ function App() {
     <Page>
       <Countdown
         title="Starts in"
-        format={["days", "hours", "minutes", "seconds"]}
+        format={["hours", "days", "seconds", "minutes"]}
         endDate={exampleEndDate}
       />
     </Page>
