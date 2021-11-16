@@ -17,6 +17,8 @@ const Value = styled.div`
   font-size: 38px;
   line-height: 45px;
   font-weight: 600;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 `
 
 const Wrapper = styled.div`
