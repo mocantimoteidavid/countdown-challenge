@@ -2,6 +2,15 @@ import dayjs, { UnitTypeLongPlural } from "dayjs"
 
 export type PossibleUnit = Exclude<UnitTypeLongPlural, "dates" | "milliseconds">
 
+export type EndDate = {
+  year: number
+  month: number
+  day: number
+  hour: number
+  minute: number
+  second: number
+}
+
 function getEndDateDifferenceByUnit(
   parsedEndDate: dayjs.Dayjs,
   format: PossibleUnit[]

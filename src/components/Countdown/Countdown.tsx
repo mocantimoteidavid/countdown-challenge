@@ -6,6 +6,7 @@ import {
   getSortedFormat,
   mapUnitToLabel,
   PossibleUnit,
+  EndDate,
 } from "./helpers"
 import Unit from "./Unit"
 import Title from "./Title"
@@ -55,15 +56,6 @@ import UnitsWrapper from "./UnitsWrapper"
  *
  * Consider adding a Limitations section in the Readme with conclusions.
  */
-
-type EndDate = {
-  year: number
-  month: number
-  day: number
-  hour: number
-  minute: number
-  second: number
-}
 
 interface Props {
   title: string
