@@ -6,11 +6,8 @@ const UnitsWrapper = styled.div`
   align-items: center;
   justify-content: left;
 
-  & > div {
+  & > div:not(:last-child) {
     margin-right: 6px;
-  }
-  & > div:last-child {
-    margin-right: 0;
   }
 `
 
