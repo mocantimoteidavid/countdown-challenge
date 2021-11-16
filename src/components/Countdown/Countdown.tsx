@@ -98,6 +98,15 @@ function getEndDateDifferenceByUnit(
   return differencesByUnit
 }
 
+const mapUnitToLabel: Record<PossibleUnit, string> = {
+  years: "Years",
+  months: "Months",
+  days: "Days",
+  hours: "Hours",
+  minutes: "Minutes",
+  seconds: "Seconds",
+}
+
 class ClassCountdown extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -159,7 +168,7 @@ class ClassCountdown extends React.Component<Props, State> {
             return (
               <Unit
                 key={unit}
-                label={unit}
+                label={mapUnitToLabel[unit]}
                 value={countdownValues[i]}
                 leadingZero={this.shouldRenderLeadingZero(unit)}
               />
