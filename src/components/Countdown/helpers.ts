@@ -11,12 +11,13 @@ export type EndDate = {
   second: number
 }
 
-export const getEndDateDifferenceByUnit = (
+export const getFormattedTimeDifferences = (
+  currentTime: number,
   parsedEndDate: dayjs.Dayjs,
   format: PossibleUnit[]
 ): number[] => {
-  const currentDate = dayjs()
-  console.log(parsedEndDate)
+  const currentDate = dayjs(currentTime)
+
   let modifiableEndDate = parsedEndDate
   let differencesByUnit: number[] = []
 

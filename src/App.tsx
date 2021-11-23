@@ -5,7 +5,7 @@ const exampleEndDate = {
   year: 2021,
   month: 11,
   day: 23,
-  hour: 22,
+  hour: 23,
   minute: 11,
   second: 0,
 }

@@ -2,7 +2,7 @@ import React from "react"
 import dayjs from "dayjs"
 
 import {
-  getEndDateDifferenceByUnit,
+  getFormattedTimeDifferences,
   getSortedFormat,
   mapUnitToLabel,
   PossibleUnit,
@@ -104,7 +104,11 @@ class ClassCountdown extends React.Component<Props, State> {
       hasEnded: currentTime >= endTime ? true : false,
       format: sortedFormat,
       parsedEndDate,
-      countdownValues: getEndDateDifferenceByUnit(parsedEndDate, sortedFormat),
+      countdownValues: getFormattedTimeDifferences(
+        currentTime,
+        parsedEndDate,
+        sortedFormat
+      ),
     }
 
     this.refreshCountdownValues = this.refreshCountdownValues.bind(this)
@@ -123,22 +127,35 @@ class ClassCountdown extends React.Component<Props, State> {
     this.setState({ hasEnded: true })
   }
 
-  private refreshCountdownValues(): void {
-    const { parsedEndDate, format } = this.state
-
+  private refreshCountdownValues(
+    parsedEndDate: dayjs.Dayjs,
+    format: PossibleUnit[]
+  ): void {
     const currentTime = getCurrentTime()
     const endTime = parsedEndDate.valueOf()
 
     if (currentTime >= endTime) {
       this.endCountdown()
     } else {
-      const differences = getEndDateDifferenceByUnit(parsedEndDate, format)
-      this.setState({ parsedEndDate, countdownValues: differences })
+      const differences = getFormattedTimeDifferences(
+        getCurrentTime(),
+        parsedEndDate,
+        format
+      )
+      this.setState({ countdownValues: differences })
     }
   }
 
+  private startCountdown(): void {
+    const { parsedEndDate, format } = this.state
+
+    this.countdownInterval = setInterval(() => {
+      this.refreshCountdownValues(parsedEndDate, format)
+    }, 1000)
+  }
+
   componentDidMount() {
-    this.countdownInterval = setInterval(this.refreshCountdownValues, 1000)
+    this.startCountdown()
   }
 
   componentWillUnmount() {
