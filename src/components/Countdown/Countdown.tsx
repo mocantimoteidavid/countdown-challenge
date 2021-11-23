@@ -137,12 +137,12 @@ class ClassCountdown extends React.Component<Props, State> {
     if (currentTime >= endTime) {
       this.endCountdown()
     } else {
-      const differences = getFormattedTimeDifferences(
+      const diffs = getFormattedTimeDifferences(
         getCurrentTime(),
         parsedEndDate,
         format
       )
-      this.setState({ countdownValues: differences })
+      this.setState({ countdownValues: diffs })
     }
   }
 
