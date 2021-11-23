@@ -7,6 +7,8 @@ import {
   mapUnitToLabel,
   PossibleUnit,
   EndDate,
+  getCurrentTime,
+  shouldRenderLeadingZero,
 } from "./helpers"
 import Unit from "./Unit"
 import Title from "./Title"
@@ -55,6 +57,8 @@ import UnitsWrapper from "./UnitsWrapper"
  *
  *
  * Consider adding a Limitations section in the Readme with conclusions.
+ *
+ * Consider what shows when countdown rendered behind endDate
  */
 
 interface Props {
@@ -67,6 +71,7 @@ interface Props {
 }
 
 interface State {
+  hasEnded: boolean
   format: PossibleUnit[]
   parsedEndDate: dayjs.Dayjs
   countdownValues: number[]
@@ -80,12 +85,23 @@ class ClassCountdown extends React.Component<Props, State> {
       endDate: { year, month, day, hour, minute, second },
     } = this.props
 
-    const parsedEndDate = dayjs(
-      new Date(year, month - 1, day, hour, minute, second)
-    )
+    const endDateMilliseconds = new Date(
+      year,
+      month - 1,
+      day,
+      hour,
+      minute,
+      second
+    ).valueOf()
+    const parsedEndDate = dayjs(endDateMilliseconds)
+
+    const currentTime = getCurrentTime()
+    const endTime = endDateMilliseconds
+
     const sortedFormat = getSortedFormat(format)
 
     this.state = {
+      hasEnded: currentTime >= endTime ? true : false,
       format: sortedFormat,
       parsedEndDate,
       countdownValues: getEndDateDifferenceByUnit(parsedEndDate, sortedFormat),
@@ -94,24 +110,31 @@ class ClassCountdown extends React.Component<Props, State> {
     this.refreshCountdownValues = this.refreshCountdownValues.bind(this)
   }
 
-  private countdownInterval: number | undefined
+  private countdownInterval: NodeJS.Timeout | null = null
 
-  private refreshCountdownValues(countdownInterval: number) {
+  private removeCountdownInterval(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval)
+    }
+  }
+
+  private endCountdown(): void {
+    this.removeCountdownInterval()
+    this.setState({ hasEnded: true })
+  }
+
+  private refreshCountdownValues(): void {
     const { parsedEndDate, format } = this.state
 
-    const currentTime = dayjs().valueOf()
+    const currentTime = getCurrentTime()
     const endTime = parsedEndDate.valueOf()
 
     if (currentTime >= endTime) {
-      clearInterval(countdownInterval)
+      this.endCountdown()
     } else {
       const differences = getEndDateDifferenceByUnit(parsedEndDate, format)
       this.setState({ parsedEndDate, countdownValues: differences })
     }
-  }
-
-  private shouldRenderLeadingZero(unit: PossibleUnit): boolean {
-    return ["hours", "minutes", "seconds"].includes(unit) ? true : false
   }
 
   componentDidMount() {
@@ -119,12 +142,16 @@ class ClassCountdown extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.countdownInterval)
+    this.removeCountdownInterval()
   }
 
   render() {
     const { title } = this.props
-    const { countdownValues, format } = this.state
+    const { countdownValues, format, hasEnded } = this.state
+
+    if (hasEnded) {
+      return <p>It's rather difficult to countdown to the past.</p>
+    }
 
     return (
       <>
@@ -136,7 +163,7 @@ class ClassCountdown extends React.Component<Props, State> {
                 key={unit}
                 label={mapUnitToLabel[unit]}
                 value={countdownValues[i]}
-                leadingZero={this.shouldRenderLeadingZero(unit)}
+                leadingZero={shouldRenderLeadingZero(unit)}
               />
             )
           })}

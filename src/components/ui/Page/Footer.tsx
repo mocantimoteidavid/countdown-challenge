@@ -9,7 +9,7 @@ const StyledFooter = styled.footer`
 
 const Footer = () => (
   <StyledFooter>
-    <p>Made with ❤️ by Timotei Mocan</p>
+    <p>Made with ❤️ &nbsp;by Timotei Mocan</p>
   </StyledFooter>
 )
 

@@ -11,10 +11,10 @@ export type EndDate = {
   second: number
 }
 
-function getEndDateDifferenceByUnit(
+export const getEndDateDifferenceByUnit = (
   parsedEndDate: dayjs.Dayjs,
   format: PossibleUnit[]
-): number[] {
+): number[] => {
   const currentDate = dayjs()
   console.log(parsedEndDate)
   let modifiableEndDate = parsedEndDate
@@ -31,7 +31,7 @@ function getEndDateDifferenceByUnit(
   return differencesByUnit
 }
 
-const mapUnitToLabel: Record<PossibleUnit, string> = {
+export const mapUnitToLabel: Record<PossibleUnit, string> = {
   years: "Years",
   months: "Months",
   days: "Days",
@@ -49,7 +49,11 @@ const unitWeights: Record<PossibleUnit, number> = {
   seconds: 6,
 }
 
-const getSortedFormat = (format: PossibleUnit[]): PossibleUnit[] =>
+export const getSortedFormat = (format: PossibleUnit[]): PossibleUnit[] =>
   format.sort((a, b) => unitWeights[a] - unitWeights[b])
 
-export { getEndDateDifferenceByUnit, getSortedFormat, mapUnitToLabel }
+export const getCurrentTime = (): number => new Date().valueOf()
+
+export function shouldRenderLeadingZero(unit: PossibleUnit): boolean {
+  return ["hours", "minutes", "seconds"].includes(unit) ? true : false
+}
