@@ -1,4 +1,5 @@
 import dayjs, { UnitTypeLongPlural } from "dayjs"
+import { State } from "./Countdown"
 
 export type PossibleUnit = Exclude<UnitTypeLongPlural, "dates" | "milliseconds">
 
@@ -9,6 +10,43 @@ export type EndDate = {
   hour: number
   minute: number
   second: number
+}
+
+export const inferInitialStateFromProps = (
+  format: PossibleUnit[],
+  endDate: EndDate
+): State => {
+  const { year, month, day, hour, minute, second } = endDate
+
+  const endDateMilliseconds = new Date(
+    year,
+    month - 1,
+    day,
+    hour,
+    minute,
+    second
+  ).valueOf()
+
+  const currentTime = getCurrentTime()
+  const endTime = endDateMilliseconds
+  const hasEnded = currentTime >= endTime ? true : false
+
+  const sortedFormat = getSortedFormat(format)
+
+  const parsedEndDate = dayjs(endDateMilliseconds)
+
+  const countdownValues = getFormattedTimeDifferences(
+    currentTime,
+    parsedEndDate,
+    sortedFormat
+  )
+
+  return {
+    hasEnded,
+    sortedFormat,
+    parsedEndDate,
+    countdownValues,
+  }
 }
 
 export const getFormattedTimeDifferences = (
