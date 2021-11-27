@@ -19,7 +19,8 @@
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.15"
+    "@types/styled-components": "^5.1.15",
+    "jest-styled-components": "^7.0.8"
   },
   "scripts": {
     "start": "react-scripts start",

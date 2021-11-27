@@ -35,4 +35,10 @@ describe("Unit", () => {
 
     expect(renderedValue).toEqual("7")
   })
+
+  it("renders with correct styling", () => {
+    const { container } = render(<Unit label="Pants" value={7} />)
+
+    expect(container.firstChild).toMatchSnapshot()
+  })
 })
