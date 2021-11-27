@@ -37,7 +37,7 @@ const Unit: React.FC<Props> = ({ label, value, leadingZero }) => {
   const displayValue = isValueSingleDigit && leadingZero ? `0${value}` : value
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="unit">
       <Value data-testid="value">{displayValue}</Value>
       <Label data-testid="label">{label}</Label>
     </Wrapper>

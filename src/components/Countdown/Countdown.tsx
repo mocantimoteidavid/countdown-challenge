@@ -141,12 +141,16 @@ class ClassCountdown extends React.Component<Props, State> {
     const { countdownValues, sortedFormat, hasEnded } = this.state
 
     if (hasEnded) {
-      return <p>It's rather difficult to countdown to the past.</p>
+      return (
+        <p data-testid="endedMessage">
+          It's rather difficult to countdown to the past.
+        </p>
+      )
     }
 
     return (
       <>
-        <Title>{title}</Title>
+        <Title data-testid="title">{title}</Title>
         <UnitsWrapper>
           {sortedFormat.map((unit, i) => {
             return (

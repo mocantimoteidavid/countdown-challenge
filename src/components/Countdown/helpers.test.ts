@@ -53,7 +53,7 @@ describe("getFormattedTimeDifferences", () => {
 
     const output = getFormattedTimeDifferences(currentTime, endDate, format)
 
-    expect(output).toEqual([1, 2, 3, 4, 5, 6])
+    expect(output).toEqual([1, 2, 2, 4, 5, 6])
   })
 })
 

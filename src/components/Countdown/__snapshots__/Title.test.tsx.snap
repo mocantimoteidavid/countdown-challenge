@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Title renders with correct styling 1`] = `
+.c0 {
+  text-transform: uppercase;
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 400;
+}
+
+<h3
+  class="c0"
+>
+  Alladin
+</h3>
+`;
