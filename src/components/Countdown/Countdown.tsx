@@ -81,7 +81,9 @@ class ClassCountdown extends React.Component<Props, State> {
 
     const { format, endDate } = this.props
 
-    this.state = inferInitialStateFromProps(format, endDate)
+    const currentTime = getCurrentTime()
+
+    this.state = inferInitialStateFromProps(currentTime, format, endDate)
 
     this.refreshCountdownValues = this.refreshCountdownValues.bind(this)
   }

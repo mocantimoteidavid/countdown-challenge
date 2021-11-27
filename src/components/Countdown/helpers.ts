@@ -13,6 +13,7 @@ export type EndDate = {
 }
 
 export const inferInitialStateFromProps = (
+  currentTime: number,
   format: PossibleUnit[],
   endDate: EndDate
 ): State => {
@@ -27,7 +28,6 @@ export const inferInitialStateFromProps = (
     second
   ).valueOf()
 
-  const currentTime = getCurrentTime()
   const endTime = endDateMilliseconds
   const hasEnded = currentTime >= endTime ? true : false
 

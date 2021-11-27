@@ -3,6 +3,7 @@ import {
   getCurrentTime,
   getFormattedTimeDifferences,
   getSortedFormat,
+  inferInitialStateFromProps,
   PossibleUnit,
   shouldRenderLeadingZero,
 } from "./helpers"
@@ -96,14 +97,59 @@ describe("shouldRenderLeadingZero", () => {
 
 describe("getCurrentTime", () => {
   it("returns correct current time", () => {
-    const fixedTime = 1466424490000
+    const fixedTime = 1608492020000
     const mockedDate = new Date(fixedTime)
     const spy = jest
       .spyOn(global, "Date")
       .mockImplementation(() => (mockedDate as unknown) as string)
 
-    expect(getCurrentTime()).toEqual(1466424490000)
+    expect(getCurrentTime()).toEqual(1608492020000)
 
     spy.mockRestore()
+  })
+})
+
+describe("inferInitialStateFromProps", () => {
+  it("returns correct state object from props", () => {
+    const endDate = {
+      year: 2029,
+      month: 12,
+      day: 24,
+      hour: 23,
+      minute: 59,
+      second: 59,
+    }
+    const format: PossibleUnit[] = [
+      "months",
+      "years",
+      "days",
+      "seconds",
+      "minutes",
+    ]
+
+    const output = inferInitialStateFromProps(1608492020000, format, endDate)
+
+    expect(output).toEqual({
+      countdownValues: [9, 0, 4, 219, 39],
+      hasEnded: false,
+      parsedEndDate: expect.anything(),
+      sortedFormat: ["years", "months", "days", "minutes", "seconds"],
+    })
+  })
+
+  it("returns hasEnded 'true' if endDate is in the past", () => {
+    const endDate = {
+      year: 1999,
+      month: 1,
+      day: 1,
+      hour: 1,
+      minute: 1,
+      second: 1,
+    }
+    const format: PossibleUnit[] = ["years"]
+
+    const output = inferInitialStateFromProps(1608492020000, format, endDate)
+
+    expect(output.hasEnded).toEqual(true)
   })
 })
