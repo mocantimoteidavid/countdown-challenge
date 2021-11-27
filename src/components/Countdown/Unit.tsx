@@ -38,8 +38,8 @@ const Unit: React.FC<Props> = ({ label, value, leadingZero }) => {
 
   return (
     <Wrapper>
-      <Value>{displayValue}</Value>
-      <Label>{label}</Label>
+      <Value data-testid="value">{displayValue}</Value>
+      <Label data-testid="label">{label}</Label>
     </Wrapper>
   )
 }
